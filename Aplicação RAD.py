@@ -62,6 +62,22 @@ def listar_tarefas():
     for (id, descricao) in cursor:
         lista_tarefas.insert(tk.END, f"{id}: {descricao}")
 
+# Função para editar uma tarefa
+def editar_tarefa():
+    tarefa_selecionada = lista_tarefas.curselection()
+    if tarefa_selecionada:
+        tarefa_id = lista_tarefas.get(tarefa_selecionada[0]).split(":")[0]
+        nova_descricao = entrada_tarefa.get()
+        if nova_descricao:
+            cursor.execute("UPDATE tarefas SET descricao=%s WHERE id=%s", (nova_descricao, tarefa_id))
+            db.commit()
+            listar_tarefas()
+            entrada_tarefa.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Aviso", "Por favor, insira uma nova descrição para a tarefa.")
+    else:
+        messagebox.showwarning("Aviso", "Por favor, selecione uma tarefa para editar.")
+
 # Função para excluir uma tarefa do banco de dados
 def excluir_tarefa():
     tarefa_selecionada = lista_tarefas.curselection()
@@ -84,6 +100,12 @@ entrada_tarefa.pack(pady=10)
 # Botão para adicionar tarefa
 botao_adicionar = tk.Button(janela, text="Adicionar Tarefa", command=adicionar_tarefa)
 botao_adicionar.pack()
+
+# Botão para editar tarefa
+
+botao_editar = tk.Button(janela, text="Editar Tarefa", command=editar_tarefa)
+botao_editar.pack()
+
 
 # Lista de tarefas
 lista_tarefas = tk.Listbox(janela, width=50)
